@@ -43,7 +43,12 @@ func (a *Api) Run() {
 	}
 	router := gin.New()
 	//use logger middle ware
-	router.Use(base.Logger(), base.Authorizer())
+	router.Use(base.Logger())
 	router.GET("/", version.Version)
+	authorized := router.Group("/")
+	authorized.Use(base.Authorizer())
+	{
+		//TODO
+	}
 	router.Run(a.Listen)
 }
