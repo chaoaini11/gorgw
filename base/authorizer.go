@@ -76,6 +76,7 @@ func Authorizer() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		defer mgo.Close()
 		user := &entity.User{}
 		err = mgo.FindOne(Conf["db"], Conf["usercoll"], map[string]interface{}{"accesskeyid": id_key[0]}, user)
 		if err != nil { //check accesskeyid is exist
@@ -115,7 +116,7 @@ func Authorizer() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		//TODO
+		c.Set("user", user)
 		c.Next()
 	}
 }
