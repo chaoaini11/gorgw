@@ -8,6 +8,7 @@ version     1.0
 package entity
 
 type User struct {
+	Guid        string
 	Account     string
 	Password    string
 	Name        string
