@@ -32,11 +32,11 @@ type Api struct {
 //method of Api to start up api
 func (a *Api) Run() {
 	fmt.Println(time.Now().String(), "Run Api with Config:")
-	fmt.Println("---------config---------")
+	fmt.Println("------------------config------------------")
 	for k, v := range Conf {
-		fmt.Println(k, "\t\t:\t", v)
+		fmt.Println(k, "\t\t\t\t\t:\t\t\t", v)
 	}
-	fmt.Println("------------------------")
+	fmt.Println("------------------------------------------")
 	if Conf["debug"] != "true" {
 		//switch gin mode to release
 		gin.SetMode(gin.ReleaseMode)
