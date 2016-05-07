@@ -12,6 +12,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/base64"
+	"fmt"
 	"math"
 	"net/http"
 	"sort"
@@ -19,7 +20,12 @@ import (
 	"time"
 
 	//third party package
+	"github.com/ailncode/golib/mongo"
 	"github.com/gin-gonic/gin"
+
+	//project package
+	. "github.com/ailncode/gorgw/config"
+	"github.com/ailncode/gorgw/entity"
 )
 
 func Authorizer() gin.HandlerFunc {
@@ -63,10 +69,16 @@ func Authorizer() gin.HandlerFunc {
 			return
 		}
 		//check Authorization
-		//TODO get accesskeyid and secretkey
-		accesskeyid := "accesskeyid"
-		secretkey := "secretkey"
-		if id_key[0] != accesskeyid { //check accesskeyid is exist
+		mgo, err := mongo.NewMongo(Conf["server"])
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, ApiErr{http.StatusInternalServerError, "open mongodb server error."})
+			c.Abort()
+			return
+		}
+		user := &entity.User{}
+		err = mgo.FindOne(Conf["db"], Conf["usercoll"], map[string]interface{}{"accesskeyid": id_key[0]}, user)
+		if err != nil { //check accesskeyid is exist
 			c.JSON(http.StatusUnauthorized, ApiErr{http.StatusUnauthorized, "accesskeyid is not exist."})
 			c.Abort()
 			return
@@ -93,11 +105,11 @@ func Authorizer() gin.HandlerFunc {
 		stringToSign := c.Request.Method + "\n" +
 			date + "\n" +
 			c.Request.URL.Path + queryStr
-		key := []byte(secretkey)
+		key := []byte(user.SecretKey)
 		mac := hmac.New(sha1.New, key)
 		mac.Write([]byte(stringToSign))
 		signature := base64.StdEncoding.EncodeToString(mac.Sum(nil))
-		right_authorization := accesskeyid + ":" + signature
+		right_authorization := user.AccessKeyID + ":" + signature
 		if right_authorization != authorizer {
 			c.JSON(http.StatusUnauthorized, ApiErr{http.StatusUnauthorized, "bad authorizer."})
 			c.Abort()
