@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//project package
+	"github.com/ailncode/gorgw/api/bucket"
 	"github.com/ailncode/gorgw/api/version"
 	"github.com/ailncode/gorgw/base"
 	. "github.com/ailncode/gorgw/config"
@@ -48,7 +49,10 @@ func (a *Api) Run() {
 	authorized := router.Group("/")
 	authorized.Use(base.Authorizer())
 	{
-		//TODO
+		//bucket
+		authorized.Post("/", bucket.Post)
+		authorized.Put("/:bucketname", bucket.Put)
+		authorized.Get("/:bucketname", bucket.Get)
 	}
 	router.Run(a.Listen)
 }

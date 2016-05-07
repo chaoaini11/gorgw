@@ -30,7 +30,15 @@
 	3.签名编码
 	使用用户私钥 对上一步生成的签名字符串 进行 hmac_sha1 签名 并对签名结果进行 base64 编码
 	4.构造Signature
-	signature = accesskeyid:base64 string
+	signature = accesskeyid:base64 string	
+##Bucket
+###创建Bucket
+
+	POST /
+	Date:{rfc2616 date}
+	Authorization:{singature}
+
+	bucket={bucketname}&limit={public | private}
 
 	
 	
