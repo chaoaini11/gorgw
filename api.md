@@ -57,7 +57,16 @@
 				"IsPublic":true
 			}
 		]
+###修改Bucket
+	Request:
+		PUT /{bucketname}
+		Date:{rfc2616 date}
+		Authorization:{singature}
+	
+		ispublic={false | true}
 
+	Response:
+		{Code:200,Message:"update bucket success."}
 
 	
 	

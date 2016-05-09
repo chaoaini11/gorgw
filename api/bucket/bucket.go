@@ -66,7 +66,46 @@ var Post = func(c *gin.Context) {
 
 //update one bucket
 var Put = func(c *gin.Context) {
-	//TODO UPDATE BUCKET
+	user := c.MustGet("user").(*entity.User)
+	//check
+	mgo, err := mongo.NewMongo(Conf["server"])
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "open mongodb server error."})
+		c.Abort()
+		return
+	}
+	defer mgo.Close()
+	bucket_name := c.Param("bucketname")
+	is_public := false
+	if c.PostForm("ispublic") == "true" {
+		is_public = true
+	}
+	var bucket entity.Bucket
+	err = mgo.FindOne(Conf["db"], Conf["bucketcoll"], map[string]interface{}{"owner": user.Guid, "name": bucket_name}, &bucket)
+	if err != nil {
+		err = mgo.Insert(Conf["db"], Conf["bucketcoll"], &entity.Bucket{uuid.New(), bucket_name, user.Guid, is_public})
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "create bucket server error."})
+			c.Abort()
+			return
+		}
+		c.JSON(http.StatusOK, base.ApiErr{http.StatusOK, "create bucket success."})
+		c.Abort()
+		return
+	}
+	bucket.IsPublic = is_public
+	err = mgo.Update(Conf["db"], Conf["bucketcoll"], map[string]interface{}{"owner": user.Guid, "name": bucket_name}, &bucket)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "update bucket server error."})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, base.ApiErr{http.StatusOK, "update bucket success."})
+	c.Abort()
+	return
 }
 
 //list all bucket
