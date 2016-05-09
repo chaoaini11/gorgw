@@ -17,7 +17,6 @@ import (
 
 	//project package
 	"github.com/ailncode/gorgw/api/bucket"
-	"github.com/ailncode/gorgw/api/version"
 	"github.com/ailncode/gorgw/base"
 	. "github.com/ailncode/gorgw/config"
 )
@@ -45,14 +44,16 @@ func (a *Api) Run() {
 	router := gin.New()
 	//use logger middle ware
 	router.Use(base.Logger())
-	router.GET("/", version.Version)
 	authorized := router.Group("/")
 	authorized.Use(base.Authorizer())
 	{
 		//bucket
-		authorized.Post("/", bucket.Post)
-		authorized.Put("/:bucketname", bucket.Put)
-		authorized.Get("/:bucketname", bucket.Get)
+		authorized.POST("/", bucket.Post)
+		bucketGroup := router.Group("/")
+		{
+			bucketGroup.PUT("/:bucketname", bucket.Put)
+			bucketGroup.GET("/:bucketname", bucket.Get)
+		}
 	}
 	router.Run(a.Listen)
 }
