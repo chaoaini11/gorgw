@@ -44,12 +44,13 @@ func (a *Api) Run() {
 	router := gin.New()
 	//use logger middle ware
 	router.Use(base.Logger())
-	authorized := router.Group("/")
+	authorized := router.Group("")
 	authorized.Use(base.Authorizer())
 	{
 		//bucket
 		authorized.POST("/", bucket.Post)
 		bucketGroup := router.Group("/")
+		bucketGroup.Use(base.Authorizer())
 		{
 			bucketGroup.PUT("/:bucketname", bucket.Put)
 			bucketGroup.GET("/", bucket.Get)
