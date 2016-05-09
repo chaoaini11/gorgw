@@ -33,12 +33,31 @@
 	signature = accesskeyid:base64 string	
 ##Bucket
 ###创建Bucket
+	Request:
+		POST /
+		Date:{rfc2616 date}
+		Authorization:{singature}
+	
+		bucket={bucketname}&ispublic={false | true}
 
-	POST /
-	Date:{rfc2616 date}
-	Authorization:{singature}
+	Response:
+		{Code:200,Message:"create bucket success."}
+###
+	Request:
+		GET /
+		Date:{ref2616 date}
+		Authorization:{signature}
 
-	bucket={bucketname}&ispublic={false | true}
+	Response:
+		[
+			{
+				"Guid":"c00d85cb-6c5f-46fe-a32f-ff972ce38a98",
+				"Name":"mybucket",
+				"Owner":"cb3a1a34-e1c4-4a49-82dd-88399ec4b138",
+				"IsPublic":true
+			}
+		]
+
 
 	
 	
