@@ -89,7 +89,12 @@ var Get = func(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, &buckets)
+	if len(buckets) == 0 {
+		c.JSON(http.StatusOK, [0]entity.Bucket{})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, buckets)
 	c.Abort()
 	return
 }
