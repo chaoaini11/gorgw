@@ -69,7 +69,12 @@ var Put = func(c *gin.Context) {
 	//TODO UPDATE BUCKET
 }
 
-//list object in bucket
+//list all bucket
 var Get = func(c *gin.Context) {
-	//TODO LIST ALL OBJECT IN BUCKET
+	//TODO LIST ALL BUCKET
+}
+
+//list object in bucket
+var List = func(c *gin.Context) {
+	//TODO LIST ALL OBJECT IN THIS BUCKET
 }

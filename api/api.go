@@ -52,7 +52,8 @@ func (a *Api) Run() {
 		bucketGroup := router.Group("/")
 		{
 			bucketGroup.PUT("/:bucketname", bucket.Put)
-			bucketGroup.GET("/:bucketname", bucket.Get)
+			bucketGroup.GET("/", bucket.Get)
+			bucketGroup.GET("/:bucketname", bucket.List)
 		}
 	}
 	router.Run(a.Listen)
