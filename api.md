@@ -38,7 +38,7 @@
 	Date:{rfc2616 date}
 	Authorization:{singature}
 
-	bucket={bucketname}&limit={public | private}
+	bucket={bucketname}&ispublic={false | true}
 
 	
 	
