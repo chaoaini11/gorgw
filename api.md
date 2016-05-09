@@ -42,7 +42,7 @@
 
 	Response:
 		{Code:200,Message:"create bucket success."}
-###
+###列出Bucket
 	Request:
 		GET /
 		Date:{ref2616 date}
