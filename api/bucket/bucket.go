@@ -71,7 +71,27 @@ var Put = func(c *gin.Context) {
 
 //list all bucket
 var Get = func(c *gin.Context) {
-	//TODO LIST ALL BUCKET
+	user := c.MustGet("user").(*entity.User)
+	//check
+	mgo, err := mongo.NewMongo(Conf["server"])
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "open mongodb server error."})
+		c.Abort()
+		return
+	}
+	defer mgo.Close()
+	var buckets []entity.Bucket
+	err = mgo.FindAll(Conf["db"], Conf["bucketcoll"], map[string]interface{}{"owner": user.Guid}, &buckets)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "list bucket server error."})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, &buckets)
+	c.Abort()
+	return
 }
 
 //list object in bucket
