@@ -85,7 +85,9 @@ func Authorizer() gin.HandlerFunc {
 			return
 		}
 		c.Request.ParseForm()
+
 		key_value := make([]string, len(c.Request.Form))
+
 		for k, v := range c.Request.Form {
 			if len(v) > 0 {
 				key_value = append(key_value, k+"="+v[0])
@@ -94,13 +96,15 @@ func Authorizer() gin.HandlerFunc {
 			}
 		}
 		sortData := sort.StringSlice(key_value)
-		sortData.Sort()
+		sort.Sort(sortData)
 		queryStr := ""
 		for _, v := range sortData {
-			if queryStr == "" {
-				queryStr += "?" + v
-			} else {
-				queryStr += "&" + v
+			if v != "" {
+				if queryStr == "" {
+					queryStr += "?" + v
+				} else {
+					queryStr += "&" + v
+				}
 			}
 		}
 		stringToSign := c.Request.Method + "\n" +
