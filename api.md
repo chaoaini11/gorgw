@@ -35,6 +35,7 @@
 ###创建Bucket
 	Request:
 		POST /
+		Content-Type:application/x-www-form-urlencoded
 		Date:{rfc2616 date}
 		Authorization:{singature}
 	
@@ -60,6 +61,7 @@
 ###修改Bucket
 	Request:
 		PUT /{bucketname}
+		Content-Type:application/x-www-form-urlencoded
 		Date:{rfc2616 date}
 		Authorization:{singature}
 	
@@ -67,6 +69,20 @@
 
 	Response:
 		{Code:200,Message:"update bucket success."}
+
+##Object
+###创建Object
+	Request:
+	POST /{bucketname}
+	Content-Type:multipart/form-data
+	Date:{rfc2616 date}
+	Authorization:{signature}
+
+	key={key}&crc32={crc32}
+
+	Response:
+	{Code:200,Message:"create object success."}
+	
 
 	
 	

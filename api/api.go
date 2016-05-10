@@ -17,6 +17,7 @@ import (
 
 	//project package
 	"github.com/ailncode/gorgw/api/bucket"
+	"github.com/ailncode/gorgw/api/object"
 	"github.com/ailncode/gorgw/base"
 	. "github.com/ailncode/gorgw/config"
 )
@@ -55,6 +56,13 @@ func (a *Api) Run() {
 			bucketGroup.PUT("/:bucketname", bucket.Put)
 			bucketGroup.GET("/", bucket.Get)
 			bucketGroup.GET("/:bucketname", bucket.List)
+		}
+		objectGroup := router.Group("/:bucketname")
+		objectGroup.Use(base.Authorizer())
+		{
+			objectGroup.POST("/:bucketname", object.Post)
+			objectGroup.PUT("/:bucketname/objectkey", object.Put)
+			objectGroup.GET("/:bucketname/objectkey", object.Get)
 		}
 	}
 	router.Run(a.Listen)
