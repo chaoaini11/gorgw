@@ -14,4 +14,5 @@ type User struct {
 	Name        string
 	AccessKeyID string
 	SecretKey   string
+	CreateTime  int64
 }
