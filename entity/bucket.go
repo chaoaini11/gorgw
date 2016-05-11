@@ -8,8 +8,9 @@ version     1.0
 package entity
 
 type Bucket struct {
-	Guid     string //ceph namespace guid
-	Name     string //user bucket name
-	Owner    string //bucket owner guid
-	IsPublic bool
+	Guid       string //ceph namespace guid
+	Name       string //user bucket name
+	Owner      string //bucket owner guid
+	IsPublic   bool
+	CreateTime int64
 }
