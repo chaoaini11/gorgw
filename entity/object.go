@@ -13,10 +13,11 @@ import (
 )
 
 type Object struct {
-	Guid      string //guid
-	Name      string //the object name
-	Bucket    string //which bucket this object in
-	Namespace string //which namespace this object in
-	Size      int64  //Byte
-	Mime      mime.Mime
+	Guid       string //guid
+	Name       string //the object name
+	Bucket     string //which bucket this object in
+	Namespace  string //which namespace this object in
+	Size       int64  //Byte
+	Mime       mime.Mime
+	CreateTime int64
 }
