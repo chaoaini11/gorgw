@@ -10,8 +10,9 @@ package object
 import (
 	//golang official package
 	"bufio"
+	"encoding/hex"
 	"fmt"
-	"mime/multipart"
+	"io"
 
 	//third party package
 	"github.com/ailncode/gorados"
@@ -20,9 +21,9 @@ import (
 	. "github.com/ailncode/gorgw/config"
 )
 
-func Create(nameSpace, key string, file multipart.File, taskId string) {
+func Create(nameSpace, key, md5 string, rc io.ReadCloser, taskId string) {
 	//conf
-	defer file.Close()
+	defer rc.Close()
 	conf := &gorados.Config{Conf["cephcluster"], Conf["cephuser"], Conf["cephpool"], Conf["ceph"], nameSpace}
 	//new Rados
 	r, err := gorados.New(conf)
@@ -34,12 +35,18 @@ func Create(nameSpace, key string, file multipart.File, taskId string) {
 	defer r.Close()
 	b := r.NewBuffer(key)
 	defer b.Close()
-	buf := bufio.NewReader(file)
+	buf := bufio.NewReader(rc)
 	write_len, err := buf.WriteTo(b)
 	if err != nil {
 		//write task result
 		fmt.Println(err)
 		return
+	}
+	//check sum
+	md5_sum := b.MD5.Sum(nil)
+	if md5 != hex.EncodeToString(md5_sum) {
+		//wirte error
+		fmt.Println(md5, hex.EncodeToString(md5_sum))
 	}
 	fmt.Println("write success.", write_len)
 	//write task result
