@@ -11,6 +11,7 @@ import (
 	//golang official package
 	"fmt"
 	"net/http"
+	"time"
 
 	//third party package
 	"github.com/ailncode/golib/mongo"
@@ -52,7 +53,7 @@ var Post = func(c *gin.Context) {
 		return
 	}
 	//create bucket
-	err = mgo.Insert(Conf["db"], Conf["bucketcoll"], &entity.Bucket{uuid.New(), bucket_name, user.Guid, is_public})
+	err = mgo.Insert(Conf["db"], Conf["bucketcoll"], &entity.Bucket{uuid.New(), bucket_name, user.Guid, is_public, time.Now().Unix()})
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "create bucket server error."})
@@ -84,7 +85,7 @@ var Put = func(c *gin.Context) {
 	var bucket entity.Bucket
 	err = mgo.FindOne(Conf["db"], Conf["bucketcoll"], map[string]interface{}{"owner": user.Guid, "name": bucket_name}, &bucket)
 	if err != nil {
-		err = mgo.Insert(Conf["db"], Conf["bucketcoll"], &entity.Bucket{uuid.New(), bucket_name, user.Guid, is_public})
+		err = mgo.Insert(Conf["db"], Conf["bucketcoll"], &entity.Bucket{uuid.New(), bucket_name, user.Guid, is_public, time.Now().Unix()})
 		if err != nil {
 			fmt.Println(err)
 			c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "create bucket server error."})
