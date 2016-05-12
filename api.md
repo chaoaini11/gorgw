@@ -78,7 +78,7 @@
 	Date:{rfc2616 date}
 	Authorization:{signature}
 
-	key={key}&crc32={crc32}
+	key={key}&md5={md5}
 
 	Response:
 	{Code:200,Message:"create object success."}
