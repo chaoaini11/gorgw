@@ -50,15 +50,15 @@ func (a *Api) Run() {
 	{
 		//bucket
 		authorized.POST("/", bucket.Post)
-		bucketGroup := router.Group("/")
+		bucketGroup := router.Group("")
 		bucketGroup.Use(base.Authorizer())
 		{
 			bucketGroup.PUT("/:bucketname", bucket.Put)
 			bucketGroup.GET("/", bucket.Get)
 			bucketGroup.GET("/:bucketname", bucket.List)
 		}
-		objectGroup := router.Group("/:bucketname")
-		objectGroup.Use(base.Authorizer())
+		objectGroup := router.Group("")
+		objectGroup.Use(base.Authorizer(), base.CheckBucket())
 		{
 			objectGroup.POST("/:bucketname", object.Post)
 			objectGroup.PUT("/:bucketname/objectkey", object.Put)
