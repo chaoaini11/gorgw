@@ -22,6 +22,7 @@ var (
 )
 
 func create(key, filename string) {
+
 	fmt.Println(key)
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
@@ -43,9 +44,9 @@ func create(key, filename string) {
 		return
 	}
 	defer f.Close()
-
 	m := md5.New()
 	io.Copy(m, f)
+
 	md5Str := hex.EncodeToString(m.Sum(nil))
 	md5Key, err := w.CreateFormField("md5")
 	if err != nil {
@@ -57,17 +58,18 @@ func create(key, filename string) {
 		fmt.Println(err)
 		return
 	}
-
 	fileKey, err := w.CreateFormFile("file", filename)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	_, err = io.Copy(fileKey, f)
+	f.Seek(0, 0)
+	cop_len, err := io.Copy(fileKey, f)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	fmt.Println(cop_len)
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiurl+"mybucket", &b)
 	if err != nil {
