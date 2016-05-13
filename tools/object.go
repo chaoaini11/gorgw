@@ -70,6 +70,7 @@ func create(key, filename string) {
 		return
 	}
 	fmt.Println(cop_len)
+	w.Close()
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiurl+"mybucket", &b)
 	if err != nil {
