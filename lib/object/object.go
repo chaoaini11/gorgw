@@ -24,6 +24,7 @@ import (
 
 	//project package
 	. "github.com/ailncode/gorgw/config"
+	"github.com/ailncode/gorgw/entity"
 )
 
 func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId string) error {
@@ -42,7 +43,7 @@ func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId str
 	b := r.NewBuffer(key)
 	defer b.Close()
 	buf := bufio.NewReaderSize(rc, 1024*1024*4)
-	write_len, err := buf.WriteTo(b)
+	_, err = buf.WriteTo(b)
 	if err != nil {
 		//write task result
 		fmt.Println(err)
@@ -66,7 +67,7 @@ func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId str
 	}
 	obj := entity.Object{uuid.New(), key, bucketName, nameSpace,
 		b.Off, m, time.Now().Unix(), md5}
-	defer mgo.Close(Conf["db"], Conf["objectcoll"])
+	defer mgo.Close()
 	err = mgo.Insert(Conf["db"], Conf["objectcoll"], &obj)
 	if err != nil {
 		return err
