@@ -82,6 +82,29 @@
 
 	Response:
 	{Code:200,Message:"create object success."}
+###列出Object
+	Request:
+		GET /{bucketname}
+		Date:{rfc2616 date}
+		Authorization:{signature}
+
+	Response
+		[
+			{
+				"Guid":"9e501843-e305-4cf8-ad0b-21c91cfab59c",
+				"Name":"bucket.go",
+				"Bucket":"mybucket",
+				"Namespace":"a8e64128-0f64-4740-a0e6-ffd2d234419d",
+				"Size":3757,
+				"Mime":{
+					"Suffix":"",
+					"Type":""
+				},
+				"CreateTime":1463208961,
+				"MD5":"86030b1588f8b16c7dbb31700dd68772"
+			}
+		]
+
 	
 
 	
