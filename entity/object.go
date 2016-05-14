@@ -17,7 +17,8 @@ type Object struct {
 	Name       string //the object name
 	Bucket     string //which bucket this object in
 	Namespace  string //which namespace this object in
-	Size       int64  //Byte
+	Size       uint64 //Byte
 	Mime       mime.Mime
 	CreateTime int64
+	MD5        string
 }

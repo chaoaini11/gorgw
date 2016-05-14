@@ -14,20 +14,22 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	//third party package
+	"github.com/ailncode/golib/mime"
 	"github.com/ailncode/golib/mongo"
 	"github.com/ailncode/gorados"
+	"github.com/pborman/uuid"
 
 	//project package
 	. "github.com/ailncode/gorgw/config"
+	"github.com/ailncode/gorgw/entity"
 )
 
-func Create(nameSpace, key, md5 string, rc io.ReadCloser, taskId string) error {
+func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId string) error {
 	//conf
 	defer rc.Close()
-	fmt.Println(rc)
-	fmt.Println("create config")
 	conf := &gorados.Config{Conf["cephcluster"], Conf["cephuser"], Conf["cephpool"], Conf["cephconfig"], nameSpace}
 	//new Rados
 	r, err := gorados.New(conf)
@@ -38,11 +40,10 @@ func Create(nameSpace, key, md5 string, rc io.ReadCloser, taskId string) error {
 	}
 	//close
 	defer r.Close()
-	fmt.Println("create new buffer")
 	b := r.NewBuffer(key)
 	defer b.Close()
-	buf := bufio.NewReaderSize(rc, 1024*1024*64)
-	write_len, err := buf.WriteTo(b)
+	buf := bufio.NewReaderSize(rc, 1024*1024*4)
+	_, err = buf.WriteTo(b)
 	if err != nil {
 		//write task result
 		fmt.Println(err)
@@ -55,7 +56,22 @@ func Create(nameSpace, key, md5 string, rc io.ReadCloser, taskId string) error {
 		//wirte error
 		fmt.Println(md5, hex.EncodeToString(md5_sum))
 	}
-	fmt.Println("write success.", write_len)
+	mgo, err := mongo.NewMongo(Conf["server"])
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("open mongodb server error.")
+	}
+	m := mime.Suffix(key)
+	if m == mime.UKNOWN {
+		m = mime.FileHeader(b.FileHeader)
+	}
+	obj := entity.Object{uuid.New(), key, bucketName, nameSpace,
+		b.Off, m, time.Now().Unix(), md5}
+	defer mgo.Close()
+	err = mgo.Insert(Conf["db"], Conf["objectcoll"], &obj)
+	if err != nil {
+		return err
+	}
 	return nil
 	//write task result
 }
