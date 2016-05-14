@@ -72,13 +72,27 @@
 
 ##Object
 ###创建Object
-	Request:
-	POST /{bucketname}
-	Content-Type:multipart/form-data
-	Date:{rfc2616 date}
-	Authorization:{signature}
-
-	key={key}&md5={md5}
+	Request:(note key must be first param md5 must be second param and file must be third param)
+		POST /{bucketname}
+		Content-Type:multipart/form-data; boundary=de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Date:{rfc2616 date}
+		Authorization:{signature}
+	
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Disposition: form-data; name="key"
+		
+		test.txt
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Disposition: form-data; name="md5"
+		
+		77645b597f9895345d98217daaa47922
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Type: application/octet-stream
+		Content-Disposition: form-data; name="file"; filename="test.txt"
+		
+		this is test text
+		
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb--
 
 	Response:
 	{Code:200,Message:"create object success."}
