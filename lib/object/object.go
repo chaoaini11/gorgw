@@ -40,7 +40,8 @@ func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId str
 	}
 	//close
 	defer r.Close()
-	b := r.NewBuffer(key)
+	object_guid := uuid.New()
+	b := r.NewBuffer(object_guid)
 	defer b.Close()
 	buf := bufio.NewReaderSize(rc, 1024*1024*4)
 	_, err = buf.WriteTo(b)
@@ -65,7 +66,7 @@ func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId str
 	if m == mime.UKNOWN {
 		m = mime.FileHeader(b.FileHeader)
 	}
-	obj := entity.Object{uuid.New(), key, bucketName, nameSpace,
+	obj := entity.Object{object_guid, key, bucketName, nameSpace,
 		b.Off, m, time.Now().Unix(), md5}
 	defer mgo.Close()
 	err = mgo.Insert(Conf["db"], Conf["objectcoll"], &obj)
