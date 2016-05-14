@@ -61,8 +61,8 @@ func (a *Api) Run() {
 		objectGroup.Use(base.Authorizer(), base.CheckBucket())
 		{
 			objectGroup.POST("/:bucketname", object.Post)
-			objectGroup.PUT("/:bucketname/objectkey", object.Put)
-			objectGroup.GET("/:bucketname/objectkey", object.Get)
+			objectGroup.PUT("/:bucketname/:objectkey", object.Put)
+			objectGroup.GET("/:bucketname/:objectkey", object.Get)
 		}
 	}
 	router.Run(a.Listen)
