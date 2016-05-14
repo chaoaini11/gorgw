@@ -119,7 +119,14 @@
 			}
 		]
 
-	
+###获取Object
+	Request:
+		GET /{bucketname}/{objectkey}
+		Date:{rfc2616 date}
+		Authorization:{signature}
+
+	Reponse
+		object data
 
 	
 	
