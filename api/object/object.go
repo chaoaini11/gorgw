@@ -114,7 +114,7 @@ var Post = func(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err = object.Create(b.Guid, key, md5, p, task_id)
+	err = object.Create(b.Guid, key, bucket_name, md5, p, task_id)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "create object error."})
