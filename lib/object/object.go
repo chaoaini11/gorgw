@@ -25,8 +25,41 @@ import (
 	//project package
 	. "github.com/ailncode/gorgw/config"
 	"github.com/ailncode/gorgw/entity"
+	"github.com/ailncode/gorgw/lib/bucket"
 )
 
+func Get(owner, bucketName, key string) (entity.Object, error) {
+	var o entity.Object
+	b, err := bucket.Get(owner, bucketName)
+	if err != nil {
+		return o, err
+	}
+	mgo, err := mongo.NewMongo(Conf["server"])
+	if err != nil {
+		fmt.Println(err)
+		return o, errors.New("open mongodb server error.")
+	}
+	defer mgo.Close()
+	err = mgo.FindOne(Conf["db"], Conf["objectcoll"],
+		map[string]interface{}{"namespace": b.Guid, "name": key}, &o)
+	return o, err
+}
+func GetReader(owner, bucketName, key string) (*gorados.RadosBuffer, error) {
+
+	var buf *gorados.RadosBuffer
+	obj, err := Get(owner, bucketName, key)
+	if err != nil {
+		return buf, err
+	}
+	conf := &gorados.Config{Conf["cephcluster"], Conf["cephuser"], Conf["cephpool"], Conf["cephconfig"], obj.Namespace}
+	//new Rados
+	r, err := gorados.New(conf)
+	if err != nil {
+		fmt.Println(err)
+		return buf, err
+	}
+	return r.NewBuffer(obj.Guid), nil
+}
 func Create(nameSpace, key, bucketName, md5 string, rc io.ReadCloser, taskId string) error {
 	//conf
 	defer rc.Close()
