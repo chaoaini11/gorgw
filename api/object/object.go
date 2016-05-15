@@ -9,6 +9,7 @@ package object
 
 import (
 	//golang official package
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -133,5 +134,26 @@ var Put = func(c *gin.Context) {
 
 //get one object
 var Get = func(c *gin.Context) {
-
+	user := c.MustGet("user").(*entity.User)
+	bucket_name := c.Param("bucketname")
+	object_name := c.Param("objectkey")
+	o, err := object.Get(user.Guid, bucket_name, object_name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "can not find object in this bucket error."})
+		c.Abort()
+		return
+	}
+	rc, err := object.GetReader(user.Guid, bucket_name, object_name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "open object reader error."})
+		c.Abort()
+		return
+	}
+	defer rc.Rados.Close()
+	defer rc.Close()
+	c.Header("Content-Type", o.Mime.Type)
+	buf := bufio.NewReaderSize(rc, 1024*1024*4)
+	buf.WriteTo(c.Writer)
+	c.Abort()
+	return
 }

@@ -72,17 +72,61 @@
 
 ##Object
 ###创建Object
-	Request:
-	POST /{bucketname}
-	Content-Type:multipart/form-data
-	Date:{rfc2616 date}
-	Authorization:{signature}
-
-	key={key}&md5={md5}
+	Request:(note key must be first param md5 must be second param and file must be third param)
+		POST /{bucketname}
+		Content-Type:multipart/form-data; boundary=de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Date:{rfc2616 date}
+		Authorization:{signature}
+	
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Disposition: form-data; name="key"
+		
+		test.txt
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Disposition: form-data; name="md5"
+		
+		77645b597f9895345d98217daaa47922
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb
+		Content-Type: application/octet-stream
+		Content-Disposition: form-data; name="file"; filename="test.txt"
+		
+		this is test text
+		
+		--de8ddc1751ba01fa33cbc09a7e61335e27baa2a3e226269e7b0a5cae94cb--
 
 	Response:
 	{Code:200,Message:"create object success."}
-	
+###列出Object
+	Request:
+		GET /{bucketname}
+		Date:{rfc2616 date}
+		Authorization:{signature}
+
+	Response
+		[
+			{
+				"Guid":"9e501843-e305-4cf8-ad0b-21c91cfab59c",
+				"Name":"bucket.go",
+				"Bucket":"mybucket",
+				"Namespace":"a8e64128-0f64-4740-a0e6-ffd2d234419d",
+				"Size":3757,
+				"Mime":{
+					"Suffix":"",
+					"Type":""
+				},
+				"CreateTime":1463208961,
+				"MD5":"86030b1588f8b16c7dbb31700dd68772"
+			}
+		]
+
+###获取Object
+	Request:
+		GET /{bucketname}/{objectkey}
+		Date:{rfc2616 date}
+		Authorization:{signature}
+
+	Reponse
+		object data
 
 	
 	

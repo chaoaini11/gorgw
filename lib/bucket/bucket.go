@@ -30,7 +30,20 @@ func Get(owner, bucketName string) (entity.Bucket, error) {
 	err = mgo.FindOne(Conf["db"], Conf["bucketcoll"], map[string]interface{}{"owner": owner, "name": bucketName}, &bucket)
 	return bucket, nil
 }
-
+func List(owner, bucketName string) ([]entity.Object, error) {
+	var objectList []entity.Object
+	b, err := Get(owner, bucketName)
+	if err != nil {
+		return objectList, err
+	}
+	mgo, err := mongo.NewMongo(Conf["server"])
+	if err != nil {
+		return objectList, err
+	}
+	defer mgo.Close()
+	err = mgo.FindAll(Conf["db"], Conf["objectcoll"], map[string]interface{}{"namespace": b.Guid}, &objectList)
+	return objectList, err
+}
 func IsExist(owner, bucketName string) (bool, error) {
 	mgo, err := mongo.NewMongo(Conf["server"])
 	if err != nil {

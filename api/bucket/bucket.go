@@ -22,6 +22,7 @@ import (
 	"github.com/ailncode/gorgw/base"
 	. "github.com/ailncode/gorgw/config"
 	"github.com/ailncode/gorgw/entity"
+	"github.com/ailncode/gorgw/lib/bucket"
 )
 
 //create one bucket
@@ -142,4 +143,14 @@ var Get = func(c *gin.Context) {
 //list object in bucket
 var List = func(c *gin.Context) {
 	//TODO LIST ALL OBJECT IN THIS BUCKET
+	bucket_name := c.Param("bucketname")
+	user := c.MustGet("user").(*entity.User)
+	bucket_list, err := bucket.List(user.Guid, bucket_name)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, base.ApiErr{http.StatusInternalServerError, "list object server error."})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, bucket_list)
 }

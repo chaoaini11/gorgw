@@ -22,7 +22,6 @@ var (
 )
 
 func create(key, filename string) {
-
 	fmt.Println(key)
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
@@ -101,6 +100,62 @@ func create(key, filename string) {
 	}
 	fmt.Println(string(body))
 }
+func list(bucketName string) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", apiurl+bucketName, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	t := time.Now().Format(time.RFC1123)
+	str := req.Method + "\n" +
+		t + "\n" +
+		"/" + bucketName
+	sign := base64.Encode(hmacsha1.Encrypt(secretkey, []byte(str)))
+	sign = accesskeyid + ":" + sign
+	req.Header.Add("Date", t)
+	req.Header.Add("Authorization", sign)
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+func get(bucketName, key string) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", apiurl+bucketName+"/"+key, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	t := time.Now().Format(time.RFC1123)
+	str := req.Method + "\n" +
+		t + "\n" +
+		"/" + bucketName + "/" + key
+	sign := base64.Encode(hmacsha1.Encrypt(secretkey, []byte(str)))
+	sign = accesskeyid + ":" + sign
+	req.Header.Add("Date", t)
+	req.Header.Add("Authorization", sign)
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
 func main() {
 	if len(os.Args) == 1 {
 		fmt.Println("bucket version 1.0")
@@ -108,7 +163,6 @@ func main() {
 		return
 	}
 	if len(os.Args) == 2 {
-
 	}
 	if len(os.Args) > 2 {
 		switch os.Args[1] {
@@ -118,9 +172,29 @@ func main() {
 			} else {
 				useCreate()
 			}
+			break
+		case "list":
+			if len(os.Args) == 3 {
+				list(os.Args[2])
+			} else {
+				useList()
+			}
+			break
+		case "get":
+			if len(os.Args) == 4 {
+				get(os.Args[2], os.Args[3])
+			} else {
+				useGet()
+			}
 		}
 	}
 }
 func useCreate() {
 	fmt.Println("object create [key] [path]")
+}
+func useList() {
+	fmt.Println("object list [bucket]")
+}
+func useGet() {
+	fmt.Println("object get [bucket] [object key]")
 }
