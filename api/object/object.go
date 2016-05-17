@@ -132,6 +132,11 @@ var Put = func(c *gin.Context) {
 
 }
 
+//delete one object
+var Delete = func(c *gin.Context) {
+
+}
+
 //get one object
 var Get = func(c *gin.Context) {
 	user := c.MustGet("user").(*entity.User)

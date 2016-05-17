@@ -63,6 +63,7 @@ func (a *Api) Run() {
 			objectGroup.POST("/:bucketname", object.Post)
 			objectGroup.PUT("/:bucketname/:objectkey", object.Put)
 			objectGroup.GET("/:bucketname/:objectkey", object.Get)
+			objectGroup.DELETE("/:bucketname/objectkey", object.Delete)
 		}
 	}
 	router.Run(a.Listen)
